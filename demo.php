@@ -80,9 +80,9 @@
 			.   : 默认情况下，表示除换行符外任意一个字符
 			^   : 直接在一个正则表达式的第一个字符出现，则表达必须以这个正则表达式开始
 			$   : 直接在一个正则表达式的最后一个字符出现，则表达必须以这个正则表达式结束
-			|   : 表示或的关系 , 它的优先级号是最低的， 最后考虑它的功能
+		**	|   : 表示或的关系 , 它的优先级号是最低的， 最后考虑它的功能
 
-			\b  : 表示一个边界
+			\b  : 表示一个边界（边界就是空格，是独立的单词的那种效果）
 			\B  ： 表示一个非边界
 
 			()  : 重点
@@ -95,13 +95,14 @@
 
 			\1 取第一个子模式、 \2取第二个子模式， ....  \5 (注意是单引号还是双引号引起来的正则)
 
-			"\\1"
-			'\1'
+			"\\1"   中\被当做转义字符
+			'\1'    中\不被当做转义字符
 			
 			${1} ${2}
 
 			\* \+ \. \?
-
+		
+		优先级的顺序（横线代表平级）
 			\ 
 			() (?:) []
 			* + ? {}
@@ -119,17 +120,17 @@
 
 		i : 表示在和模式进行匹配进不区分大小写
 		m : 默认情况，将字符串视为一行  ^  $ 视为多行后，任何一行都可以以正则开始或结束
-		s : 如果没有使用这个模式修正符号时， 元字符中的"."默认不能表示换行符号,将字符串视为单行
-		x : 表示模式中的空白忽略不计
+		s : 如果没有使用这个模式修正符号时， 元字符中的"."默认不能表示换行符号,将字符串视为单行（若有s则.可以表示换行符）
+		x : 表示模式（正则表达式中的空白）中的空白忽略不计
 		e : 正则表达式必须使用在preg_replace替换字符串的函数中时才可以使用(讲这个函数时再说)
-		A :
-		Z :
+		A :强制以正则中的表达式开头与^的作用相同
+		Z :必须以正则中的表达式结尾与$的作用相同
 		U : 正则表达式的特点：就是比较”贪婪“  .* .+ 所有字符都符合这个条件
+     		解决贪婪模式的方法
+				1.一种使用模式修正符号 U 
+				2.加一种是使用?完成  .*?  .+?
 
-			一种使用模式修正符号 U 
-			加一种是使用?完成  .*?  .+?
-
-			如果两种方式同时出现又开启了 贪婪模式  .*? /U
+			如果两种方式同时出现又开启了 贪婪模式（相当于负负得正）  .*? /U
 		
 		"/\<img\s*src=\".*?\"\/\>/iU"
 		"#\<img\s*src=\".*?\"\/\>#iU"
@@ -148,14 +149,42 @@
 		将一个网站的所有商品取出， 
 
 
-	二、学习正则表达式的强大处理函数
+	二、学习php中正则表达式的强大处理函数
 		preg_match();
+		preg_match_all($url, $str, $arr,PREG_PATTERN_ORDER );preg_pattern_order
 
+        字符串处理函数 strstr()一个字符串在另一个字符串中第一次出现的，并返回找到的位置到剩余部分的字符串，找不到则返回假；stristr()（不区分大小写）
+        					eg:echo stristr("this is a test hrello", "test")."<br>";
+								echo strstr("this is a tedst", 100);100是100对应的ASKM的字符对应的位置
+        			   strpos()  在字符串中第一次出现的位置；stripos()
+        			   substr()  
 *
- *
- *
+ *		
+ *		 str_replace()
+	     str_ireplace()  不区分大小写
+
+	     1. str_replace(string, string, string)
+	     2. str_replace(array, string, string)
+	     3. str_replace(array, array, string)
+
+	     preg_replace()  正则中替换函数
+
+	     1. 正常使用  preg_replace('string', 'string', 'stirng');
+	     2. 在正则中的子模式，可以用到二个参数中
+	     3. 在第二个参数中调用函数, 需要在模式中使用 e 模式修正符号
+	     4. 就是在前两个参数中都使用数组， 可以一起将多个模式（正则）同时替换成多个值的形式
+
+
+	     explode , 按某个字符或字符串去分割
+
+	     preg_split， 按一个正则的模式去分割
+
+	     implode---jion
  *
  */
+
+ $pattern="/\d{4}(\W)\d{2}\\1\d{2}\s+\d{2}(\W)\d{2}\\2\d{2}\s+(?:am|pm)/";  //反向引用中的用法用\\1则，这个地方的值必须和(\W)匹配到的内容完全一样  eg:$string="today is 2010/09/15 15:35:28 pm..."; 不能是$string="today is 2010/09-15 15:35=28 pm..."; 
+
    $pattern="/\<b\>(.*?)\<\/b\>/Ui";   //正则表达式模式
 $string="<b>hello</b>aaaaaa<b>php</b>aacaaaathis is testaaaaa<b>lamp</b>aaaaaaaa";      //需要和上面模式字符串进行匹配的变量字符串
 
@@ -169,3 +198,27 @@ $string="<b>hello</b>aaaaaa<b>php</b>aacaaaathis is testaaaaa<b>lamp</b>aaaaaaaa
    }else{
    	echo "<font color='red'>正则表达式{$pattern} 和字符串 {$string} 匹配失败</font>";
    }
+
+
+
+//正则匹配，然后替换
+	$str="这是一个正则表https://www.baidu.com达式的匹配函数
+	这是一个正则表http://www.baidu1.com达式的匹配函数
+	这是一个正则表https://mail.baidu2.com达式的匹配函数
+	这是一个正则表https://news.baidu3.com达式的匹配函数
+	这是一个正则表https://www.baidu4.org达式的匹配函数
+	这是一个正则表https://www.baidu5.net达式的匹配函数
+	这是一个正则表ftps://www.baidu6.com达式的匹配函数
+	这是一个正则表ftp://www.google7.com达式的匹配函数
+	这是一个正则表https://www.baidu7.net达式的匹配函数
+	";
+	function setUrl($str) {
+	 	$url="/(https?|ftps?):\/\/((www|mail|news)\.([^\.\/]+)\.(com|org|net))/i";
+		  preg_match_all($url, $str, $arr,PREG_PATTERN_ORDER );
+	 	 foreach($arr[0] as $url){
+	  		$str=str_replace($url, '<a href="'.$url.'">'.$url.'</a>', $str);
+		  }
+
+	 	 return  $str;
+	}
+	echo setUrl($str);
