@@ -160,18 +160,20 @@
         			   substr()  
 *
  *		
- *		 str_replace()
+ *		 str_replace() 第四个参数是总共替换了多少次需要传入一个变量
 	     str_ireplace()  不区分大小写
 
-	     1. str_replace(string, string, string)
+	     1. str_replace(string, string, string);参数（查找要替换的，替换成的，需要替换的字符串）
 	     2. str_replace(array, string, string)
 	     3. str_replace(array, array, string)
 
 	     preg_replace()  正则中替换函数
 
-	     1. 正常使用  preg_replace('string', 'string', 'stirng');
-	     2. 在正则中的子模式，可以用到二个参数中
+	     1. 正常使用  preg_replace('string', 'string', 'stirng');第一个参数是正则表达式
+	     2. 在正则中的子模式，可以用到二个参数中；与在正则中用\\1一样的用法
 	     3. 在第二个参数中调用函数, 需要在模式中使用 e 模式修正符号
+			
+
 	     4. 就是在前两个参数中都使用数组， 可以一起将多个模式（正则）同时替换成多个值的形式
 
 
@@ -179,7 +181,11 @@
 
 	     preg_split， 按一个正则的模式去分割
 
-	     implode---jion
+	     preg_grey()  从数组中把符合正则的数组取出
+	     preg_quote() 转义正则表达式符号（就是一个正则表达式，你不知道什么字符是需要转义的时候可以用这个函数帮你转义，就可以直接用）
+		
+		implode 组合
+	     implode==jion
  *
  */
 
